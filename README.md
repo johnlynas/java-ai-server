@@ -46,14 +46,22 @@ java -jar mcp-server/target/mcp-server-1.0.0-SNAPSHOT.jar
 | Service    | Port | Health                          | Notes |
 |------------|------|---------------------------------|-------|
 | app-server | 8080 | `GET /api/v1/health`            | `POST /api/v1/chat`, `GET /api/v1/chat/{userId}` (H2), H2 console at `/h2-console` |
-| ai-agent   | 8081 | `GET /api/v1/health`            | `POST /api/v1/chat` - uses OpenAI ChatClient when `OPENAI_API_KEY` is set, echo fallback otherwise; MCP client connects to mcp-server |
+| ai-agent   | 8081 | `GET /api/v1/health`            | `POST /api/v1/chat` - uses local Ollama ChatClient (default model llama3.2); echo fallback if Ollama is unreachable; MCP client connects to mcp-server |
 | mcp-server | 8082 | `GET /api/v1/health`            | Streamable-HTTP MCP endpoint at `/mcp`; tools: `nipp_echo`, `nipp_time`, `nipp_word_count`, `nipp_uppercase` |
 
 ## Configuration (env vars)
-- `OPENAI_API_KEY` - enables the live ChatModel in ai-agent (required for real LLM replies)
-- `OPENAI_BASE_URL`, `OPENAI_MODEL` - provider/model overrides (default gpt-4o-mini)
+- `OLLAMA_BASE_URL` - Ollama endpoint for ai-agent (default `http://localhost:11434`)
+- `OLLAMA_MODEL` - chat model name (default `llama3.2`)
+- `OLLAMA_PULL_STRATEGY` - `never`, `when_missing` (default), or `always`
 - `MCP_SERVER_URL` - where ai-agent's MCP client connects (default `http://localhost:8082`)
 - `MCP_CLIENT_ENABLED` - set `false` to run ai-agent without a live mcp-server
+
+## Ollama setup (ai-agent)
+```bash
+ollama pull llama3.2        # model used by default
+# then start ai-agent; it connects to http://localhost:11434 automatically
+```
+The pre-switch OpenAI configuration is backed up in `backup/openai-20261122/` (see RESTORE.md there).
 
 ## Docker
 Each module has its own multi-stage Dockerfile, so CI can build/deploy one service

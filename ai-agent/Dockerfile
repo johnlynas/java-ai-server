@@ -17,5 +17,5 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /workspace/ai-agent/target/ai-agent-*.jar app.jar
 EXPOSE 8081
-# Env: OPENAI_API_KEY, OPENAI_BASE_URL, OPENAI_MODEL, MCP_SERVER_URL, MCP_CLIENT_ENABLED
+# Env: OLLAMA_BASE_URL, OLLAMA_MODEL, OLLAMA_PULL_STRATEGY, MCP_SERVER_URL, MCP_CLIENT_ENABLED
 ENTRYPOINT ["java", "-jar", "app.jar"]

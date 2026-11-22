@@ -15,9 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest(properties = {
-		// Keep tests hermetic: no live MCP server, no real API key.
+		// Keep tests hermetic: no live MCP server, no live Ollama.
 		"spring.ai.mcp.client.enabled=false",
-		"spring.ai.openai.api-key="
+		"spring.ai.ollama.base-url=http://127.0.0.1:9",
+		"spring.ai.ollama.init.pull-model-strategy=never"
 })
 @AutoConfigureMockMvc
 class AiAgentApplicationTests {
