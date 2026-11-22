@@ -16,4 +16,12 @@
 
 	<!-- NOTE: deliberately NO spring-boot-maven-plugin here (standard library JAR) -->
 
+	<dependencies>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
 </project>
