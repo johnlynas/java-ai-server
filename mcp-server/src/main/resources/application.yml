@@ -1,0 +1,23 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: mcp-server
+  ai:
+    mcp:
+      server:
+        enabled: true
+        name: nipp-mcp-server
+        version: 1.0.0
+        # Streamable HTTP transport (default in Spring AI 2.x) on /mcp
+        protocol: streamable
+        type: sync
+        annotation-scanner:
+          enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

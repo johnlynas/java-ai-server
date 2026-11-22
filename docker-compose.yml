@@ -1,0 +1,63 @@
+# Runs all three services from this repo. Build context is the repo root so
+# each Dockerfile can copy the parent POM + shared-contracts.
+name: java-ai-server
+
+services:
+  app-server:
+    build:
+      context: .
+      dockerfile: app-server/Dockerfile
+      args:
+        BASE_DIR: .
+    image: nipp/app-server:1.0.0
+    ports:
+      - "8080:8080"
+    environment:
+      JAVA_OPTS: ${JAVA_OPTS:-}
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/8080'"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 20s
+
+  mcp-server:
+    build:
+      context: .
+      dockerfile: mcp-server/Dockerfile
+      args:
+        BASE_DIR: .
+    image: nipp/mcp-server:1.0.0
+    ports:
+      - "8082:8082"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/8082'"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 20s
+
+  ai-agent:
+    build:
+      context: .
+      dockerfile: ai-agent/Dockerfile
+      args:
+        BASE_DIR: .
+    image: nipp/ai-agent:1.0.0
+    ports:
+      - "8081:8081"
+    depends_on:
+      mcp-server:
+        condition: service_healthy
+    environment:
+      # Reach the MCP server via the compose network (service name, not localhost)
+      MCP_SERVER_URL: http://mcp-server:8082
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/8081'"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 20s

@@ -1,0 +1,31 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: ai-agent
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      base-url: ${OPENAI_BASE_URL:https://api.openai.com}
+      chat:
+        options:
+          model: ${OPENAI_MODEL:gpt-4o-mini}
+    mcp:
+      client:
+        enabled: ${MCP_CLIENT_ENABLED:true}
+        name: nipp-ai-agent-client
+        version: 1.0.0
+        # Connect to the local mcp-server module (port 8082) via streamable HTTP.
+        # Set MCP_CLIENT_ENABLED=false to run without a live mcp-server.
+        streamable-http:
+          connections:
+            nipp-mcp:
+              url: ${MCP_SERVER_URL:http://localhost:8082}
+              endpoint: /mcp
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
